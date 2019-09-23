@@ -74,6 +74,8 @@ def DT_train_binary(X,Y,max_depth):
                 Y_l = []
                 Y_r = []
                 i = 0
+                trindex_l = []
+                trindex_r = []
 
                 for row in X:
                     # Subset Data to get L and R sides
@@ -81,10 +83,12 @@ def DT_train_binary(X,Y,max_depth):
                         # This row belongs in X_l
                         X_l.append(row)
                         Y_l.append(Y[i])
+                        trindex_l.append(i)
                     elif row[num] == 1:
                         # This row belongs in X_r
                         X_r.append(row)
                         Y_r.append(Y[i])
+                        trindex_r.append(i)
                     
                     i += 1
 
@@ -112,13 +116,30 @@ def DT_train_binary(X,Y,max_depth):
                 if (IG > highest_IG):
                     highest_IG = IG
                     highest_IG_feature_num = num
+                    rindex_l = trindex_l
+                    rindex_r = trindex_r
                     print("Feature number", num + 1, "has highest IG with a value of", IG)
 
+            # Print highest IG feature
+            print("Splitting on feature number", highest_IG_feature_num + 1)
 
             # Take away values that have been labeled after split (if any) and recompute H() and split
-
             splits += 1
-            print("Splitting on feature number", highest_IG_feature_num + 1)
+            # Remove Rows from split side with lowest entropy
+            if h_l < h_r:
+                X = np.delete(X, rindex_l, axis=0)
+                Y = np.delete(Y, rindex_l, axis=0)
+            else:
+                X = np.delete(X, rindex_r, axis=0)
+                Y = np.delete(Y, rindex_r, axis=0)
+
+            # Remove split feature from train dataset (column wise delete)
+            X = np.delete(X, highest_IG_feature_num, axis=1)
+            num_features = X.shape[1]
+
+            H = calcEntropy(X, Y)
+            print("New Dataset H() =", H)
+            
         return("Training Complete")
 
-print(DT_train_binary(X, Y, 1))
+print(DT_train_binary(X, Y, 2))
