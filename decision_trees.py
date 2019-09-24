@@ -111,6 +111,7 @@ def DT_train_binary(X,Y,max_depth):
 
                 # Calculate the Information Gain For the Split
                 IG = calcIG(H, p_L, p_R, h_l, h_r)
+                print("IG FOR FEATURE", num + 1, "SPLIT:", IG)
 
                 # Test if highest IG
                 if (IG > highest_IG):
@@ -125,13 +126,20 @@ def DT_train_binary(X,Y,max_depth):
 
             # Take away values that have been labeled after split (if any) and recompute H() and split
             splits += 1
+
             # Remove Rows from split side with lowest entropy
+            print(X)
             if h_l < h_r:
                 X = np.delete(X, rindex_l, axis=0)
                 Y = np.delete(Y, rindex_l, axis=0)
-            else:
+            elif h_r < h_l:
                 X = np.delete(X, rindex_r, axis=0)
                 Y = np.delete(Y, rindex_r, axis=0)
+            else:
+                print("Shit entropy was the same on either side; control-c to stop")
+                input()
+            print(X)
+            input()
 
             # Remove split feature from train dataset (column wise delete)
             X = np.delete(X, highest_IG_feature_num, axis=1)
@@ -142,4 +150,4 @@ def DT_train_binary(X,Y,max_depth):
             
         return("Training Complete")
 
-print(DT_train_binary(X, Y, 2))
+print(DT_train_binary(X, Y, 3))
