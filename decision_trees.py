@@ -16,17 +16,17 @@ import numpy as np
 import math
 
 # Test Data
-# X = np.array([[0,1], [0,0], [1,0], [0,0], [1,1]]) #Training Set 1
+# X = np.array([[0,1], [0,0], [1,0], [0,0], [1,1]]) # Training Set 1
 # Y = np.array([[1], [0], [0], [0], [1]]) # Training labels 1
 
-# Entropy Test Data
+## Entropy Test Data
 X = np.array([[1, 1, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 1], [0, 0, 1, 1], [0, 0, 1, 0], [0, 0, 0, 0], [1, 0, 1, 0], [1, 1, 1, 0], [0, 0, 1, 1]])
 Y = np.array([[0], [1], [1], [0], [0], [1], [0], [0], [1], [0]])
 
 
-# function that takes in Data in X and Y format and returns the entropy of the set
+## function that takes in Data in X and Y format and returns the entropy of the set
 def calcEntropy(X, Y):
-    # Calculate Entropy
+    ## Calculate Entropy
     no = 0
     yes = 0
 
@@ -59,7 +59,7 @@ def calcEntropy(X, Y):
 
 
 def calcIG(H, p_L, p_R, H_l, H_r):
-    # Calculate IG for split
+    ## Calculate IG for split
     summation = p_R * H_r + p_L * H_l
     IG = H - summation
     return IG
@@ -68,7 +68,7 @@ def split(X, Y, max_depth, num_splits, featureList):
     ### Base Cases
     # ------------
 
-    # If max depth is hit OR the feature List is empty aka no more features to split on return leaf node classifying the higher percentage class
+    ## If max depth is hit OR the feature List is empty aka no more features to split on return leaf node classifying the higher percentage class
     if num_splits == max_depth or not featureList:
         no = 0
         yes = 0
@@ -84,9 +84,9 @@ def split(X, Y, max_depth, num_splits, featureList):
 
 
     H = calcEntropy(X, Y) # H()
-    print("H():", H)
+    # print("H():", H)
 
-    # If Entropy == 0 return leaf node classifying the only class in the data
+    ## If Entropy == 0 return leaf node classifying the only class in the data
     if H == 0:
         return ([1, int(Y[0])], None, None )
 
@@ -104,14 +104,14 @@ def split(X, Y, max_depth, num_splits, featureList):
         trindex_r = []
 
         for row in X:
-            # Subset Data to get L and R sides
+            ## Subset Data to get L and R sides
             if row[num] == 0:
-                # This row belongs in X_l
+                ## This row belongs in X_l
                 X_l.append(row)
                 Y_l.append(Y[i])
 
             elif row[num] == 1:
-                # This row belongs in X_r
+                ## This row belongs in X_r
                 X_r.append(row)
                 Y_r.append(Y[i])
             
@@ -122,7 +122,7 @@ def split(X, Y, max_depth, num_splits, featureList):
         Y_l = np.array(Y_l)
         Y_r = np.array(Y_r)
 
-        # Calculate probability of being on each side (row wise)
+        ## Calculate probability of being on each side (row wise)
         samples_r = X_r.shape[0]
         samples_l = X_l.shape[0]
         total_samples = samples_l + samples_r
@@ -130,7 +130,7 @@ def split(X, Y, max_depth, num_splits, featureList):
         p_L = samples_l / total_samples
         p_R = samples_r / total_samples
 
-        # Calculate Entropy of each side
+        ## Calculate Entropy of each side
         # print("Entropy on each side for feature", num + 1)
 
         h_l = calcEntropy(X_l, Y_l)
@@ -138,11 +138,12 @@ def split(X, Y, max_depth, num_splits, featureList):
 
         # print("\tEntropy for L:", h_l)
         # print("\tEntropy for R:", h_r)
-        # Calculate the Information Gain For the Split
+
+        ## Calculate the Information Gain For the Split
         IG = calcIG(H, p_L, p_R, h_l, h_r)
         # print("IG FOR FEATURE", num + 1, "SPLIT:", IG)
 
-        # Test if highest IG
+        ## Test if highest IG
         if (IG > highest_IG):
             highest_IG = IG
             highest_IG_feature_num = num
@@ -155,13 +156,13 @@ def split(X, Y, max_depth, num_splits, featureList):
     num_splits += 1
     # print("Splitting on Feature number", highest_IG_feature_num + 1)
 
-    # Take the feature out of the feature list
+    ## Take the feature out of the feature list
     featureList.remove(highest_IG_feature_num)
     # print(featureList)
 
-    # return a recursive call to fill out the tree
-    print("Samples Going Left:", best_X_l.shape[0])
-    print("Samples Going Right:", best_X_r.shape[0])
+    ## return a recursive call to fill out the tree
+    # print("Samples Going Left:", best_X_l.shape[0])
+    # print("Samples Going Right:", best_X_r.shape[0])
     return ([0, highest_IG_feature_num + 1], split(best_X_l, best_Y_l, max_depth, num_splits, featureList), split(best_X_r, best_Y_r, max_depth, num_splits, featureList))
 
 #
@@ -175,7 +176,6 @@ def split(X, Y, max_depth, num_splits, featureList):
 def DT_train_binary(X,Y,max_depth):
 
     DT = split(X, Y, max_depth, 0, list(range(X.shape[1])))
-
     return(DT)
 
 print(DT_train_binary(X, Y, 10))
