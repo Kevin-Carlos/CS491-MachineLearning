@@ -171,74 +171,35 @@ def split(X, Y, max_depth, num_splits, featureList):
 def DT_train_binary(X,Y,max_depth):
 
     DT = split(X, Y, max_depth, 0, list(range(X.shape[1])))
-    # return(DT)
-    accuracy = DT_test_binary(X, Y, DT)
-    print("ACC:", accuracy)
+    return DT
 
 #
 # Takes the test data X and labels Y and our learned DT model and returns
 # the accuracy
 #
+def eval(X, Y, DT):
+    # We're at leaf node
+    if DT[0][0] == 1:
+        return DT[0][1]
+
+    feature_number = DT[0][1]- 1
+    if X[feature_number] == 1:
+        return eval(X, Y, DT[2])
+    else:
+        return eval(X, Y, DT[1])
+
+
 def DT_test_binary(X, Y, DT):
-    count = 0
-    compareY = []
+    y_pred = []
+    for i in range(X.shape[0]):
+        y_pred.append(eval(X[i], Y[i], DT))
 
-    # Start with root
-    rootFeature = DT[0][1] - 1 # -1 seems the array is stored 1-4 not 0-3
-
-    for index, item in enumerate(X):
-        featureInXList = X[index][rootFeature]
-
-        # If featureInXList is 0 --> left
-        # If featureInXList is 1 --> right
-        answer = []
-        if (featureInXList == 0):
-            temp = checkLeftChild(DT)
-        elif (featureInXList == 1):
-            temp = checkRightChild(DT)
-
-        answer.append(temp)
-
-        # Compare both Y arrays and compute accuracy
-        compareY.append(answer)
-
-    # for item in compareY:
-    #     print(item)
-
+    # compare y_pred and Y to get accuracy
     accuracy = 0
     i = 0
     while i < len(Y):
-        if (Y[i] == compareY[i]):
+        if (Y[i] == y_pred[i]):
             accuracy += 1
         i += 1
 
-    accuracy = accuracy / len(Y)
-
-    return accuracy
-
-def checkLeftChild(DT):
-    for inner_l in DT[1]:
-        for index, item in enumerate(inner_l):
-
-            if (item == 1):
-                return inner_l[index + 1]
-
-            # Need to write
-            elif (item == 0): # Need to check deeper in list
-                return item
-
-
-def checkRightChild(DT):
-    for inner_l in DT[2]:
-        for index, item in enumerate(inner_l):
-
-            if (item == 1):
-                return inner_l[index + 1]
-
-            # Need to write
-            elif (item == 0): # Need to check deeper in list
-                return item
-
-# DT_train_binary(X, Y, 1)
-
-# print(DT_train_binary(X, Y, 1))
+    return accuracy / len(Y)

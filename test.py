@@ -8,4 +8,6 @@ import numpy as np
 X = np.array([[1, 1, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 1], [0, 0, 1, 1], [0, 0, 1, 0], [0, 0, 0, 0], [1, 0, 1, 0], [1, 1, 1, 0], [0, 0, 1, 1]])
 Y = np.array([[0], [1], [1], [0], [0], [1], [0], [0], [1], [0]])
 
-dt.DT_train_binary(X, Y, 1)
+DT = dt.DT_train_binary(X, Y, 1)
+test_acc = dt.DT_test_binary(X, Y, DT)
+print("ACC:", test_acc)
