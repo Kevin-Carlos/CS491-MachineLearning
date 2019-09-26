@@ -38,8 +38,8 @@ def calcEntropy(X, Y):
 
     totalCount = no + yes
 
-    yesSide1 = (yes/totalCount) 
-    noSide1 = (no/totalCount) 
+    yesSide1 = (yes/totalCount)
+    noSide1 = (no/totalCount)
 
     try:
         yesSide2 = math.log2(yes/totalCount)
@@ -114,7 +114,7 @@ def split(X, Y, max_depth, num_splits, featureList):
                 ## This row belongs in X_r
                 X_r.append(row)
                 Y_r.append(Y[i])
-            
+
             i += 1
 
         X_l = np.array(X_l)
@@ -173,9 +173,79 @@ def split(X, Y, max_depth, num_splits, featureList):
 # Entropy:  H() = Summation(c element of C) of -p(c) log_2 p(c)
 # IG:           = H - Summation(t) of p(t)H(t)
 #
+# This returns a tree in the form: ([leaf/split], [label/featureNum], leftChild, rightChild)
+# Respectively:                    ([0/1], [0 or 1, featureNum or 0 if label is 1], leftChild, rightChild)
+#
 def DT_train_binary(X,Y,max_depth):
 
     DT = split(X, Y, max_depth, 0, list(range(X.shape[1])))
-    return(DT)
+    # return(DT)
+    accuracy = DT_test_binary(X, Y, DT)
 
-print(DT_train_binary(X, Y, 10))
+#
+# Takes the test data X and labels Y and our learned DT model and returns
+# the accuracy
+#
+def DT_test_binary(X, Y, DT):
+    count = 0
+    compareY = []
+
+    # Start with root
+    rootFeature = DT[0][1] - 1 # -1 seems the array is stored 1-4 not 0-3
+
+    for index, item in enumerate(X):
+        featureInXList = X[index][rootFeature]
+
+        # If featureInXList is 0 --> left
+        # If featureInXList is 1 --> right
+        answer = []
+        if (featureInXList == 0):
+            temp = checkLeftChild(DT)
+        elif (featureInXList == 1):
+            temp = checkRightChild(DT)
+
+        answer.append(temp)
+
+        # Compare both Y arrays and compute accuracy
+        compareY.append(answer)
+
+    # for item in compareY:
+    #     print(item)
+
+    accuracy = 0
+    i = 0
+    while i < len(Y):
+        if (Y[i] == compareY[i]):
+            accuracy += 1
+        i += 1
+
+    accuracy = accuracy / len(Y)
+
+    return accuracy
+
+def checkLeftChild(DT):
+    for inner_l in DT[1]:
+        for index, item in enumerate(inner_l):
+
+            if (item == 1):
+                return inner_l[index + 1]
+
+            # Need to write
+            elif (item == 0): # Need to check deeper in list
+                return item
+
+
+def checkRightChild(DT):
+    for inner_l in DT[2]:
+        for index, item in enumerate(inner_l):
+
+            if (item == 1):
+                return inner_l[index + 1]
+
+            # Need to write
+            elif (item == 0): # Need to check deeper in list
+                return item
+
+DT_train_binary(X, Y, 1)
+
+# print(DT_train_binary(X, Y, 1))
