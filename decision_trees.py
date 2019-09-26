@@ -184,6 +184,7 @@ def DT_test_binary(X, Y, DT):
     compareY = []
 
     # Start with root
+    # Need this to initalize the search
     rootFeature = DT[0][1] - 1 # -1 seems the array is stored 1-4 not 0-3
 
     for index, item in enumerate(X):
@@ -193,9 +194,9 @@ def DT_test_binary(X, Y, DT):
         # If featureInXList is 1 --> right
         answer = []
         if (featureInXList == 0):
-            temp = checkLeftChild(DT)
+            temp = checkLeftChild(DT, X, index, featureInXList)
         elif (featureInXList == 1):
-            temp = checkRightChild(DT)
+            temp = checkRightChild(DT, X, index, featureInXList)
 
         answer.append(temp)
 
@@ -216,28 +217,38 @@ def DT_test_binary(X, Y, DT):
 
     return accuracy
 
-def checkLeftChild(DT):
-    for inner_l in DT[1]:
-        for index, item in enumerate(inner_l):
+def checkLeftChild(DT, X, index, feat):
+    print("Left:", DT[1])
+    print("First:", DT[1][0][0])
 
-            if (item == 1):
-                return inner_l[index + 1]
+    # Its a leaf, return label
+    if (DT[1][0][0] == 1):
+        return DT[1][0][1]
 
-            # Need to write
-            elif (item == 0): # Need to check deeper in list
-                return item
+    # Its a split, keep checking
+    if (DT[1][0][0] == 0):
+        # Need to check if next element is a new node or leaf
+        if (DT[1][1][0][0] == 0):
+            feat = DT[1][1][0][1]
+            print("NewFeat:", newFeature)
+        elif (DT[1][1][0][0] == 1):
+            # Grab and return the label
+            return DT[1][1][0][1]
 
 
-def checkRightChild(DT):
-    for inner_l in DT[2]:
-        for index, item in enumerate(inner_l):
+def checkRightChild(DT, X, index, feat):
+    print("Right:", DT[2])
+    print("First:", DT[2][0][0])
 
-            if (item == 1):
-                return inner_l[index + 1]
+    if (DT[2][0][0] == 1):
+        return DT[2][0][1]
 
-            # Need to write
-            elif (item == 0): # Need to check deeper in list
-                return item
+    if (DT[2][0][0] == 0):
+        newFeature = DT[2][1][0][1]
+        print("NewFeat:", newFeature)
+    elif (DT[1][1][0][0] == 1):
+        # Grab and return the label
+        return DT[1][1][0][1]
 
 # DT_train_binary(X, Y, 1)
 
