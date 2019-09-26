@@ -15,14 +15,6 @@
 import numpy as np
 import math
 
-# Test Data
-# X = np.array([[0,1], [0,0], [1,0], [0,0], [1,1]]) # Training Set 1
-# Y = np.array([[1], [0], [0], [0], [1]]) # Training labels 1
-
-## Entropy Test Data
-X = np.array([[1, 1, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 1], [0, 0, 1, 1], [0, 0, 1, 0], [0, 0, 0, 0], [1, 0, 1, 0], [1, 1, 1, 0], [0, 0, 1, 1]])
-Y = np.array([[0], [1], [1], [0], [0], [1], [0], [0], [1], [0]])
-
 
 ## function that takes in Data in X and Y format and returns the entropy of the set
 def calcEntropy(X, Y):
@@ -181,6 +173,7 @@ def DT_train_binary(X,Y,max_depth):
     DT = split(X, Y, max_depth, 0, list(range(X.shape[1])))
     # return(DT)
     accuracy = DT_test_binary(X, Y, DT)
+    print("ACC:", accuracy)
 
 #
 # Takes the test data X and labels Y and our learned DT model and returns
@@ -246,6 +239,6 @@ def checkRightChild(DT):
             elif (item == 0): # Need to check deeper in list
                 return item
 
-DT_train_binary(X, Y, 1)
+# DT_train_binary(X, Y, 1)
 
 # print(DT_train_binary(X, Y, 1))
