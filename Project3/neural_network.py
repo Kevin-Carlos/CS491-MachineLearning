@@ -62,7 +62,7 @@ def encode(y):
 # - nnhdim :  Number of  nodes  in  the  hidden  layer
 # - numpasses :  Number of  passes  through  the  training  data  for  gradient descent
 # − printloss :  If  True ,  print  the  loss  every  1000  iterations
-eta = 0.001
+eta = 0.03
 def build_model(X, y, nn_hdim, num_passes=20000, print_loss=False):
 
   # Randomly initialize input layer weights
@@ -84,11 +84,12 @@ def build_model(X, y, nn_hdim, num_passes=20000, print_loss=False):
     # Try encoding the y_hats
     new_y_hat = np.zeros((200,2), dtype=int)
     for k in range(y_hat.shape[0]):
-      if (np.argmax(y_hat) == 0):
+      if (np.argmax(y_hat[k]) == 0):
         new_y_hat[k][0] = 1
       else:
         new_y_hat[k][1] = 1
 
+    # dLdy_hat = new_y_hat - new_y
     dLdy_hat = y_hat - new_y
     dLda = (1 - pow(h, 2)) * dLdy_hat.dot(W2.T)
     dLdW2 = (h.T).dot(dLdy_hat)
@@ -135,7 +136,7 @@ X, y = make_moons(200, noise=0.20)
 plt.scatter(X[: ,0], X[: ,1], s=40, c=y, cmap=plt.cm.Spectral)
 
 # Generate outputs
-plt.figure(figsize=(16, 18))
+plt.figure(figsize=(16, 32))
 hidden_layer_dimensions = [1, 2, 3, 4]
 for i, nn_hdim in enumerate(hidden_layer_dimensions):
     plt.subplot(5, 2, i+1)
@@ -145,3 +146,4 @@ for i, nn_hdim in enumerate(hidden_layer_dimensions):
 
 plt.tight_layout()
 plt.show()
+plt.savefig("./outputfig.png")
