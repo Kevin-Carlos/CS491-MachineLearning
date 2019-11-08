@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_moons
-import time
 
 def softmax(vals):
   numerator = np.exp(vals)
@@ -42,8 +41,6 @@ def calculate_loss(model, X, y):
       loss += -(new_y[i][j] * np.log(y_hat[i][j]))
   
   loss /= X.shape[0]
-
-
   return loss
 
 def encode(y):
@@ -62,7 +59,7 @@ def encode(y):
 # - nnhdim :  Number of  nodes  in  the  hidden  layer
 # - numpasses :  Number of  passes  through  the  training  data  for  gradient descent
 # − printloss :  If  True ,  print  the  loss  every  1000  iterations
-eta = 0.03
+eta = 0.032
 def build_model(X, y, nn_hdim, num_passes=20000, print_loss=False):
 
   # Randomly initialize input layer weights
@@ -89,8 +86,8 @@ def build_model(X, y, nn_hdim, num_passes=20000, print_loss=False):
       else:
         new_y_hat[k][1] = 1
 
-    # dLdy_hat = new_y_hat - new_y
-    dLdy_hat = y_hat - new_y
+    dLdy_hat = new_y_hat - new_y #0.32
+    # dLdy_hat = y_hat - new_y #0.012
     dLda = (1 - pow(h, 2)) * dLdy_hat.dot(W2.T)
     dLdW2 = (h.T).dot(dLdy_hat)
     dLdb2 = np.sum(dLdy_hat)
@@ -105,45 +102,40 @@ def build_model(X, y, nn_hdim, num_passes=20000, print_loss=False):
 
     model = {'W1': W1, 'b1': b1, 'W2': W2, 'b2': b2}
         
-    if (i % 1000 == 0):
-      print_loss = True
     
-    if (print_loss):
+    if (print_loss and i % 1000 == 0):
       print("Loss after iteration %i: %f" %(i, calculate_loss(model, X, y)))
-      print_loss = False
 
   return model
 
 
 
-def plot_decision_boundary(pred_func, X, y):
-    # Set min and max values and give it some padding
-    x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
-    y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
-    h = 0.01
-    # Generate a grid of points with distance h between them
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
-    # Predict the function value for the whole grid
-    Z = pred_func(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
-    # Plot the contour and the training examples
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
-    plt.scatter(X[: ,0], X[: ,1], s=40, c=y, cmap=plt.cm.Spectral)
+# def plot_decision_boundary(pred_func, X, y):
+#     # Set min and max values and give it some padding
+#     x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
+#     y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
+#     h = 0.01
+#     # Generate a grid of points with distance h between them
+#     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+#     # Predict the function value for the whole grid
+#     Z = pred_func(np.c_[xx.ravel(), yy.ravel()])
+#     Z = Z.reshape(xx.shape)
+#     # Plot the contour and the training examples
+#     plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
+#     plt.scatter(X[: ,0], X[: ,1], c=y, cmap=plt.cm.Spectral)
 
 # Generate dataset
-np.random.seed(0)
-X, y = make_moons(200, noise=0.20)
-plt.scatter(X[: ,0], X[: ,1], s=40, c=y, cmap=plt.cm.Spectral)
+# np.random.seed(0)
+# X, y = make_moons(200, noise=0.20)
+# plt.scatter(X[: ,0], X[: ,1], s=40, c=y, cmap=plt.cm.Spectral)
 
 # Generate outputs
-plt.figure(figsize=(16, 32))
-hidden_layer_dimensions = [1, 2, 3, 4]
-for i, nn_hdim in enumerate(hidden_layer_dimensions):
-    plt.subplot(5, 2, i+1)
-    plt.title('HiddenLayerSize%d' % nn_hdim)
-    model = build_model(X, y, nn_hdim)
-    plot_decision_boundary(lambda x: predict(model, x), X, y)
+# plt.figure(figsize=(16, 16)) #Change to make it show on my laptop screen
+# hidden_layer_dimensions = [1, 2, 3, 4]
+# for i, nn_hdim in enumerate(hidden_layer_dimensions):
+#     plt.subplot(5, 2, i+1)
+#     plt.title('HiddenLayerSize%d' % nn_hdim)
+#     model = build_model(X, y, nn_hdim)
+#     plot_decision_boundary(lambda x: predict(model, x), X, y)
 
-plt.tight_layout()
-plt.show()
-plt.savefig("./outputfig.png")
+# plt.show()
